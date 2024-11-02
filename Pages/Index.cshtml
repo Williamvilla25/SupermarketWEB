@@ -34,6 +34,7 @@
                 @Html.DisplayNameFor(modelItem => item.Description)
             </td>
             <td>
+                <a asp-page="./Edit" asp-router-id="@item.Id" class="btn btn-danger">Edit</a>
                 <a asp-page="./Delete" asp-router-id="@item.Id" class="btn btn-danger">Delete</a>
             </td>
         </tr>
