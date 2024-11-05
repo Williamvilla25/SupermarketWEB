@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SupermarketWEB.Data;
 using SupermarketWEB.Models;
 
-namespace SupermarketWEB.Pages.Products
+namespace SupermarketWEB.Pages.Providers
 {
     public class IndexModel : PageModel
     {
@@ -14,11 +14,11 @@ namespace SupermarketWEB.Pages.Products
             _context = context;
         }
 
-        public IList<Product> Products { get; set; }
+        public IList<Provider> Providers { get; set; }
 
         public async Task OnGetAsync()
         {
-            Products = await _context.Products.Include(p => p.Category).ToListAsync();
+            Providers = await _context.Providers.ToListAsync();
         }
     }
 }

@@ -1,36 +1,48 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using SupermarketWEB.Data;
-using SupersarketuEs. Models;
+using SupermarketWEB.Models;
 
-namespace SupermarketWEB.Pages.Categories
+namespace SupermarketWEB.Pages.Products
 {
-    public class DeleteModel : PagesModel
-
-    private readonly Supermarke xt _context; 
-
-    public DeleteModol(SupermarketContext context)
+    public class DeleteModel : PageModel
     {
-        _context = context;
+        private readonly SupermarketContext _context;
+
+        [BindProperty]
+        public Product Product { get; set; }
+
+        public DeleteModel(SupermarketContext context)
+        {
+            _context = context;
+        }
+
+        public async Task<IActionResult>
+    OnGetAsync(int? id)
+    {
+    if (id == null) return NotFound();
+
+    Product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
+
+    if (Product == null) return NotFound();
+
+    return Page();
     }
 
-    [BindProperty]
-    public Category category { get; set; } = default;
-
-    public async Taske ult> OnGetAsyne(int? id)
-    {
-        if Cid = null || _context.Categories — null) 
+    public async Task<IActionResult>
+        OnPostAsync(int? id)
         {
-            return NotFound();
+        if (id == null) return NotFound();
+
+        Product = await _context.Products.FindAsync(id);
+
+        if (Product != null)
+        {
+        _context.Products.Remove(Product);
+        await _context.SaveChangesAsync();
         }
 
-        Var category = await _context.Categories.FirstOrDefaultAsync(m => m.Id == id);
-
-        if (category = null)
-        {
-            return NotFound();
+        return RedirectToPage("./Index");
         }
-        else
-        {
-            category = category;
         }
-        return Pages();
-    }
+        }
