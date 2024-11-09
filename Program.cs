@@ -1,59 +1,48 @@
-﻿using SupermarketEF.Data;
-using SupermarketEF.Models;
-
-namespace SupermarketEF
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using SupermarketWEB.Data;
+namespace SupermarketWEB
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            using SumermarketContext context = new SumermarketContext();
+            var builder = WebApplication.CreateBuilder(args);
 
-            // Se crea el objeto oilCategory de tipo Category
-            Category oilCategory = new Category()
+            // Add services to the container.
+            builder.Services.AddRazorPages();
+
+            builder.Services.AddAuthentication().AddCookie("MyCookieAuth", options =>
             {
-                Name = "Oil",
-                Description = "Oil Category"
-            };
+                options.Cookie.Name = "MyCookieAuth";
+                options.LoginPath = "/Account/Login";
+            });
 
-            // Se agrega el objeto creado al contexto de la BD
-            // Usando la propiedad Categories del contexto
-            context.Categories.Add(oilCategory);
+            //Agregando el contexto SupermarketContext a la aplicaci�n
+            builder.Services.AddDbContext<SupermarketContext>(options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("SupermarketDB"))
+            );
 
-            // Se crea el objeto grainsCategory de tipo Category
-            Category grainsCategory = new Category()
+            var app = builder.Build();
+
+            // Configure the HTTP request pipeline.
+            if (!app.Environment.IsDevelopment())
             {
-                Name = "Grains",
-                Description = "Grains Category"
-            };
-
-            // Se agrega el objeto creado al contexto de la BD
-            context.Add(grainsCategory);
-
-            // Se graban los cambios realizados al contexto
-            context.SaveChanges();
-
-            // Recupera todas las categorías y las ordena por el nombre
-            var grainCategory = context.Categories
-                                          .Where(p => p.Name == "Grains")
-                                          .FirstOrDefault();
-
-            if (grainCategory is Category)
-            {
-                grainCategory.Description = "New description applied";
-                context.Remove(grainCategory);
-
+                app.UseExceptionHandler("/Error");
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
             }
 
-            context.SaveChanges();
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
-            var categories = context.Categories.OrderBy(p => p.Name);
+            app.UseRouting();
 
-            foreach (var category in categories)
-            {
-                Console.WriteLine($"{category.Name} | {category.Description}");
+            app.UseAuthorization();
 
-            }
+            app.MapRazorPages();
+
+            app.Run();
         }
     }
 }
