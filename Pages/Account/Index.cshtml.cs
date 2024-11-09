@@ -24,3 +24,4 @@ namespace SupermarketWEB.Pages.Account
         }
     }
 }
+
